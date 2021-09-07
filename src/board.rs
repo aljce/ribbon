@@ -12,6 +12,15 @@ pub enum Color {
     Yellow,
 }
 
+impl Color {
+    pub fn magnitude(self) -> i8 {
+        match self {
+            Color::Red => 1,
+            Color::Yellow => -1,
+        }
+    }
+}
+
 impl Not for Color {
     type Output = Self;
     fn not(self) -> Self::Output {
@@ -208,7 +217,8 @@ impl fmt::Display for PieceList {
             }
             writeln!(f, "")?;
         }
-        Ok(())
+        writeln!(f, "{}", "-".repeat(WIDTH))?;
+        writeln!(f, "Turn: {}", self.turn)
     }
 }
 
@@ -308,7 +318,8 @@ impl fmt::Display for Bitboard {
             }
             writeln!(f, "")?;
         }
-        Ok(())
+        writeln!(f, "{}", "-".repeat(WIDTH))?;
+        writeln!(f, "Turn: {}", self.turn)
     }
 }
 
@@ -340,9 +351,7 @@ mod tests {
         sum
     }
 
-    #[test]
-    fn perft_unit_1() {
-        let notation = "1471116462531526523152622637576544";
+    fn perft_unit<'a>(notation: &'a str) {
         let mut piece_list = parse::<PieceList>(notation).unwrap();
         let piece_list_clone = piece_list.clone();
         let mut bitboard = parse::<Bitboard>(notation).unwrap();
@@ -350,5 +359,20 @@ mod tests {
         assert_eq!(perft(&mut piece_list), perft(&mut bitboard));
         assert_eq!(piece_list, piece_list_clone);
         assert_eq!(bitboard, bitboard_clone);
+    }
+
+    #[test]
+    fn perft_unit_1() {
+        perft_unit("1471116462531526523152622637576544");
+    }
+
+    #[test]
+    fn perft_unit_2() {
+        perft_unit("455155137133342477531351477744");
+    }
+
+    #[test]
+    fn perft_unit_3() {
+        perft_unit("61134124344226244271352657663");
     }
 }
